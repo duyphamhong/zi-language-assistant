@@ -15,6 +15,8 @@ Your API key is stored in Windows Credential Manager, never in the extension.
 
 ![AI Message Assistant preview](docs/plans/demo1-1280x800.png)
 
+![AI Message Assistant preview](docs/plans/demo2.png)
+
 ## User Guide
 
 AI Message Assistant helps you improve a message draft before you send it. It
