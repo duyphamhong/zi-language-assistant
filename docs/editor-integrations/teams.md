@@ -29,6 +29,15 @@ the native safety limit are rejected. Mentions, attachments, images, GIFs,
 stickers, cards, Loop components, tables, code blocks, and non-editable embedded
 content are rejected before native messaging.
 
+## Suggestion preview
+
+The extension opens an accessible, compact popover above its composer control so
+the Teams toolbar and Send button remain available. It shows an editable
+suggestion, the selected tone, a collapsed original-draft disclosure, and an
+optional local diff. Escape, Cancel, and Close discard the preview. **Replace
+draft** remains the only action that changes the active composer; on success the
+popover closes and focus returns to that composer.
+
 For the verified `teams.live.com` CKEditor composer, replacement selects the
 active composer contents, then uses Chrome's `debugger` API to invoke
 browser-trusted `Input.insertText` for each text segment and Shift+Enter to
