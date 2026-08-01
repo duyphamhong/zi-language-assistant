@@ -182,8 +182,10 @@ export function showPolishedDraftPreview(
     options.onClose(reason);
   };
   const showError = (message: string) => {
-    footer.previousElementSibling?.classList.contains('error') &&
-      footer.previousElementSibling.remove();
+    const previousElement = footer.previousElementSibling;
+    if (previousElement?.classList.contains('error')) {
+      previousElement.remove();
+    }
     const error = document.createElement('p');
     error.className = 'error';
     error.textContent = message;

@@ -3,3 +3,4 @@ dist/
 .wxt/
 coverage/
 *.log
+apps/extension/.output/*.zip
