@@ -11,6 +11,7 @@
   "include": [
     "entrypoints",
     "services",
+    "src",
     "components",
     "stores",
     "wxt.config.ts"

@@ -19,6 +19,9 @@ const configSchema = z
     defaultTone: z.string(),
     maxInputCharacters: z.number().int().positive().max(10_000),
     maxOutputTokens: z.number().int().positive().max(2_000),
+    // Retained only to read configurations written by the short-lived 0.3
+    // release. GPT-5.6 does not accept a custom temperature in this workflow.
+    temperature: z.number().min(0).max(2).optional(),
     requestTimeoutMs: z.number().int().positive().max(120_000),
     mockMode: z.boolean(),
     logging: z

@@ -45,12 +45,7 @@ export class OpenAiWritingProvider implements WritingProvider {
       const response = await client.responses.create({
         model: this.config.model,
         max_output_tokens: this.config.maxOutputTokens,
-        instructions: buildPrompt(
-          request.operation,
-          request.sourceLanguage,
-          request.targetLanguage,
-          request.tone,
-        ),
+        instructions: buildPrompt(request.tone),
         input: request.text,
       });
       const suggestedText = response.output_text.trim();

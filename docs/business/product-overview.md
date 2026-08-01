@@ -2,7 +2,7 @@
 
 ## Product purpose
 
-AI Message Assistant helps people improve a message before they send it in browser-based workplace chat tools. Its initial value is quick, private, user-controlled writing assistance for grammar, translation, professional tone, and concision.
+AI Message Assistant helps people improve a message before they send it in browser-based workplace chat tools. Its initial value is quick, private, user-controlled English grammar and professional-polishing assistance.
 
 The product is not a chatbot, a customer-support system, or an autonomous messaging tool. It improves the wording of a draft that the user explicitly chooses to submit for assistance.
 
@@ -20,7 +20,7 @@ People frequently write short workplace messages in a non-native language, under
 
 1. The user writes a draft in a supported chat editor.
 2. The user explicitly invokes AI Message Assistant.
-3. The product sends only the selected/current draft and requested operation to the local native host.
+3. The product sends only the selected/current draft to the local native host.
 4. The product shows a suggestion and its metadata.
 5. The user decides whether to use the suggestion.
 6. The user remains responsible for reviewing and sending the final message.
@@ -43,12 +43,8 @@ Only the draft necessary for the requested transformation may leave the extensio
 
 ### Focused workplace writing quality
 
-The initial supported transformations are:
-
-- Grammar correction
-- Translation
-- Professional-tone rewriting
-- Concise rewriting
+The Teams integration supports one transformation: grammar correction and
+professional polishing into natural workplace English.
 
 Suggestions must preserve meaning and technical details. They must not invent facts, answer as a participant in the conversation, or add explanations to the revised message.
 
@@ -60,7 +56,10 @@ Phase 1 does not yet read or write Slack, Microsoft Teams, or any web editor. A 
 
 ## Phase 2 business objective
 
-Phase 2 should bring the same user-controlled workflow into supported Slack and Microsoft Teams message composers:
+Phase 2 brings the same user-controlled workflow to verified Microsoft Teams for
+Web plain-text chat composers. Slack remains deferred. The user invokes the
+assistant from an extension-owned control, previews a suggestion, and explicitly
+replaces the draft if desired:
 
 - The user invokes the assistant from a clearly visible control.
 - The product reads only the current draft after that action.

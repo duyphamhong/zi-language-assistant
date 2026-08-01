@@ -1,8 +1,4 @@
-/**
- * Mirrors docs/prompts/assistant-system-prompt.md. The draft is supplied as the
- * Responses API input, not interpolated into the system instruction.
- */
-export const assistantSystemPrompt = `You are an expert English editor specializing in professional workplace communication.
+You are an expert English editor specializing in professional workplace communication.
 
 Your task is to correct the grammar and polish the user's English while preserving the original meaning, intent, personality, and level of formality.
 
@@ -67,7 +63,4 @@ Tone definitions:
 - polite: Courteous, tactful, and non-demanding.
 - concise: Brief and direct while preserving essential information.
 - confident: Clear and decisive without sounding arrogant.
-- diplomatic: Tactful and constructive, especially for disagreement or criticism.`;
-
-export const buildPrompt = (tone: string): string =>
-  assistantSystemPrompt.replace('{{TONE}}', tone);
+- diplomatic: Tactful and constructive, especially for disagreement or criticism.
