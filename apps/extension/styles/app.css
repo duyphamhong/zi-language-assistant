@@ -1,0 +1,61 @@
+:root {
+  font-family: system-ui, sans-serif;
+  color: #172033;
+  background: #f8fafc;
+}
+body {
+  margin: 0;
+}
+main {
+  padding: 16px;
+}
+.popup {
+  width: 300px;
+}
+.options {
+  max-width: 720px;
+  margin: 0 auto;
+}
+h1 {
+  font-size: 20px;
+}
+label {
+  display: grid;
+  gap: 6px;
+  margin: 16px 0;
+  font-weight: 600;
+}
+textarea,
+select {
+  font: inherit;
+  padding: 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+}
+textarea {
+  min-height: 110px;
+}
+button {
+  margin: 4px 8px 8px 0;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 6px;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+}
+button.secondary {
+  background: #475569;
+}
+button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.error {
+  color: #b91c1c;
+}
+small {
+  display: block;
+  color: #64748b;
+  margin-top: 12px;
+}

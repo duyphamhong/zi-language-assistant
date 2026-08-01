@@ -1,0 +1,5 @@
+node_modules/
+dist/
+.wxt/
+apps/extension/.output/
+docs/plans/

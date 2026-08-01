@@ -1,0 +1,35 @@
+{
+  "name": "zi-language-assistant",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@10.14.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "corepack pnpm dev:extension",
+    "dev:extension": "corepack pnpm --filter @zi-language-assistant/extension dev",
+    "dev:native-host": "corepack pnpm --filter @zi-language-assistant/native-host dev",
+    "native-host": "corepack pnpm --filter @zi-language-assistant/native-host run cli",
+    "build": "corepack pnpm -r build",
+    "build:extension": "corepack pnpm --filter @zi-language-assistant/extension build",
+    "build:native-host": "corepack pnpm --filter @zi-language-assistant/native-host build",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "corepack pnpm --filter @zi-language-assistant/contracts build && corepack pnpm --filter @zi-language-assistant/prompts build && corepack pnpm -r typecheck",
+    "test": "vitest run",
+    "test:unit": "vitest run",
+    "test:integration": "vitest run tests/native-host-integration",
+    "verify": "corepack pnpm lint && corepack pnpm typecheck && corepack pnpm test && corepack pnpm build"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.32.0",
+    "@types/node": "24.1.0",
+    "eslint": "9.32.0",
+    "prettier": "3.6.2",
+    "typescript": "5.8.3",
+    "typescript-eslint": "8.38.0",
+    "vitest": "3.2.4"
+  }
+}

@@ -1,0 +1,144 @@
+#!/usr/bin/env node
+import { stdin as input, stdout as output } from 'node:process';
+import { dirname, resolve } from 'node:path';
+import { mkdir, rm, writeFile, access } from 'node:fs/promises';
+import envPaths from 'env-paths';
+import { Command } from 'commander';
+import { ConfigRepository } from './configuration/config-repository.js';
+import { OsSecretStore } from './credentials/os-secret-store.js';
+import { createNativeHostManifest } from './installation/native-host-manifest.js';
+import {
+  readRegistration,
+  registerWindows,
+  unregisterWindows,
+} from './installation/windows-registrar.js';
+const paths = envPaths('ai-message-assistant');
+const manifestPath = resolve(paths.config, 'native-host-manifest.json');
+const launcherPath = resolve(paths.data, 'ai-message-host.cmd');
+const hostEntryPoint = resolve(dirname(process.argv[1] ?? ''), 'main.js');
+const program = new Command()
+  .name('ai-message-host')
+  .description('AI Message Assistant native host');
+
+async function promptSecret(question: string): Promise<string> {
+  if (!input.isTTY) {
+    throw new Error(
+      'configure requires an interactive terminal to protect the API key.',
+    );
+  }
+  output.write(question);
+  input.setRawMode(true);
+  input.resume();
+  return new Promise((resolve, reject) => {
+    let value = '';
+    const onData = (chunk: Buffer) => {
+      const character = chunk.toString('utf8');
+      if (character === '\r' || character === '\n') {
+        cleanup();
+        output.write('\n');
+        resolve(value);
+      } else if (character === '\u0003') {
+        cleanup();
+        reject(new Error('Configuration cancelled.'));
+      } else if (character === '\u007f' || character === '\b') {
+        value = value.slice(0, -1);
+      } else {
+        value += character;
+      }
+    };
+    const cleanup = () => {
+      input.off('data', onData);
+      input.setRawMode(false);
+      input.pause();
+    };
+    input.on('data', onData);
+  });
+}
+program.command('run').action(async () => {
+  await import('./main.js');
+});
+program
+  .command('install')
+  .requiredOption('--extension-id <id>')
+  .action(async ({ extensionId }) => {
+    if (process.platform !== 'win32')
+      throw new Error('Phase 1 registration is supported on Windows only.');
+    await access(hostEntryPoint);
+    await mkdir(dirname(launcherPath), { recursive: true });
+    await writeFile(
+      launcherPath,
+      `@echo off\r\n"${process.execPath}" "${hostEntryPoint}"\r\n`,
+      { encoding: 'utf8' },
+    );
+    const manifest = createNativeHostManifest(launcherPath, extensionId);
+    await mkdir(dirname(manifestPath), { recursive: true });
+    await writeFile(manifestPath, JSON.stringify(manifest, null, 2));
+    await registerWindows(manifestPath);
+    output.write(`Installed ${manifest.name}.\n`);
+  });
+program.command('uninstall').action(async () => {
+  await unregisterWindows();
+  await rm(manifestPath, { force: true });
+  output.write(
+    'Native host registration removed. Credentials were retained.\n',
+  );
+});
+program
+  .command('configure')
+  .option('--model <model>')
+  .option('--mock-mode <enabled>', 'true or false')
+  .action(async (options) => {
+    const repository = new ConfigRepository();
+    const values: { model?: string; mockMode?: boolean } = {};
+    if (options.model) values.model = options.model;
+    if (options.mockMode !== undefined)
+      values.mockMode = options.mockMode === 'true';
+    const config = await repository.update(values);
+    const apiKey = await promptSecret(
+      'OpenAI API key (leave blank to keep current key): ',
+    );
+    if (apiKey) {
+      await new OsSecretStore().setOpenAiApiKey(apiKey);
+    }
+    output.write(
+      `Saved configuration (model: ${config.model}, mock mode: ${config.mockMode}).\n`,
+    );
+  });
+program.command('status').action(async () => {
+  const config = await new ConfigRepository().get();
+  output.write(
+    JSON.stringify(
+      {
+        registered: (await readRegistration()) !== null,
+        apiKeyConfigured: await new OsSecretStore().hasOpenAiApiKey(),
+        provider: config.provider,
+        model: config.model,
+        mockMode: config.mockMode,
+      },
+      null,
+      2,
+    ) + '\n',
+  );
+});
+program.command('doctor').action(async () => {
+  let manifestExists = true;
+  try {
+    await access(manifestPath);
+  } catch {
+    manifestExists = false;
+  }
+  output.write(
+    JSON.stringify(
+      {
+        node: process.version,
+        platform: process.platform,
+        registration: (await readRegistration()) !== null,
+        manifestExists,
+        credentialVaultAvailable: process.platform === 'win32',
+      },
+      null,
+      2,
+    ) + '\n',
+  );
+});
+await program.parseAsync();

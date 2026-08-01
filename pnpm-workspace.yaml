@@ -1,0 +1,7 @@
+packages:
+  - apps/*
+  - packages/*
+
+# keytar is the reviewed native adapter used only for Windows Credential Manager.
+onlyBuiltDependencies:
+  - keytar
