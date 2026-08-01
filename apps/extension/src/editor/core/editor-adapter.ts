@@ -16,7 +16,7 @@ export type ReplaceResult =
   | { applied: false; reason: 'stale-draft' | 'apply-failed' };
 
 export interface EditorAdapter<TComposer extends Element> {
-  readonly platform: 'teams-web' | 'whatsapp-web';
+  readonly platform: 'teams-web' | 'slack-web' | 'whatsapp-web';
   locateActiveComposer(): TComposer | null;
   inspectDraft(composer: TComposer): DraftInspection;
   readPlainText(composer: TComposer): string;

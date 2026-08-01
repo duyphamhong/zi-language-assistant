@@ -16,6 +16,7 @@ export default {
       'https://teams.cloud.microsoft/*',
       'https://teams.live.com/*',
       'https://web.whatsapp.com/*',
+      'https://app.slack.com/*',
     ],
     action: { default_popup: 'popup.html' },
     options_page: 'options.html',

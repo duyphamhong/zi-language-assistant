@@ -8,6 +8,7 @@ import {
   PROTOCOL_VERSION,
   type EditorTransformResponse,
 } from '@zi-language-assistant/contracts';
+import { experimentalWhatsAppFullDraftReplacement } from '../src/editor/whatsapp/experimental-full-draft';
 
 const editorSelectors = {
   teams: [
@@ -17,6 +18,9 @@ const editorSelectors = {
   ],
   whatsapp: [
     'div[role="textbox"][contenteditable="true"][data-lexical-editor="true"][data-tab="10"]',
+  ],
+  slack: [
+    '[data-qa="texty_input"][data-feat="composer"][contenteditable="true"][role="textbox"]',
   ],
 } as const;
 
@@ -34,6 +38,7 @@ function editorPlatformFromSender(
     )
       return 'teams';
     if (origin === 'https://web.whatsapp.com') return 'whatsapp';
+    if (origin === 'https://app.slack.com') return 'slack';
   } catch {
     return undefined;
   }
@@ -172,7 +177,7 @@ export async function routeExtensionMessage(
         args: [
           request.payload.expectedOriginalText,
           [...editorSelectors[editorPlatform]],
-          editorPlatform === 'teams',
+          editorPlatform !== 'whatsapp',
         ],
       });
       const selection = selectionResult[0]?.result;
@@ -200,6 +205,8 @@ export async function routeExtensionMessage(
         await chrome.debugger.attach(debuggee, '1.3');
         attached = true;
         if (editorPlatform === 'whatsapp') {
+          if (!experimentalWhatsAppFullDraftReplacement)
+            throw new Error('Experimental WhatsApp replacement is disabled.');
           const evaluation = await chrome.debugger.sendCommand(
             debuggee,
             'Runtime.evaluate',
