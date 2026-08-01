@@ -1,19 +1,34 @@
 {
-  "name": "@zi-language-assistant/native-host",
-  "version": "0.1.0",
+  "name": "@duyphamhong/ai-message-host",
+  "version": "0.1.1",
+  "description": "Windows native messaging host for AI Message Assistant.",
   "type": "module",
+  "os": [
+    "win32"
+  ],
+  "engines": {
+    "node": ">=24"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "runtime",
+    "README.md"
+  ],
   "bin": {
-    "ai-message-host": "./dist/cli.js"
+    "ai-message-host": "runtime/cli.js"
   },
   "scripts": {
     "dev": "tsx src/cli.ts run",
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json && corepack pnpm run bundle",
+    "bundle": "esbuild dist/cli.js --bundle --platform=node --format=esm --target=node24 --banner:js=\"#!/usr/bin/env node\" --outfile=runtime/cli.js --external:commander --external:env-paths --external:keytar --external:openai --external:pino --external:zod && esbuild dist/main.js --bundle --platform=node --format=esm --target=node24 --outfile=runtime/main.js --external:commander --external:env-paths --external:keytar --external:openai --external:pino --external:zod && esbuild dist/postinstall.js --bundle --platform=node --format=esm --target=node24 --outfile=runtime/postinstall.js",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "cli": "node dist/cli.js"
+    "cli": "node dist/cli.js",
+    "postinstall": "node runtime/postinstall.js",
+    "prepack": "corepack pnpm run build"
   },
   "dependencies": {
-    "@zi-language-assistant/contracts": "workspace:*",
-    "@zi-language-assistant/prompts": "workspace:*",
     "commander": "13.1.0",
     "env-paths": "3.0.0",
     "keytar": "7.9.0",
@@ -22,6 +37,9 @@
     "zod": "3.24.1"
   },
   "devDependencies": {
+    "@zi-language-assistant/contracts": "workspace:*",
+    "@zi-language-assistant/prompts": "workspace:*",
+    "esbuild": "0.25.9",
     "tsx": "4.19.2"
   }
 }

@@ -7,6 +7,7 @@ import { Command } from 'commander';
 import { ConfigRepository } from './configuration/config-repository.js';
 import { OsSecretStore } from './credentials/os-secret-store.js';
 import { createNativeHostManifest } from './installation/native-host-manifest.js';
+import { PRODUCTION_EXTENSION_ID } from './installation/production-extension.js';
 import {
   readRegistration,
   registerWindows,
@@ -59,7 +60,11 @@ program.command('run').action(async () => {
 });
 program
   .command('install')
-  .requiredOption('--extension-id <id>')
+  .option(
+    '--extension-id <id>',
+    'Chrome extension ID; defaults to the production Chrome Web Store item.',
+    PRODUCTION_EXTENSION_ID,
+  )
   .action(async ({ extensionId }) => {
     if (process.platform !== 'win32')
       throw new Error('Phase 1 registration is supported on Windows only.');

@@ -4,3 +4,5 @@ dist/
 coverage/
 *.log
 apps/extension/.output/*.zip
+*.tgz
+apps/native-host/runtime/

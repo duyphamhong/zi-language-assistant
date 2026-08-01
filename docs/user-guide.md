@@ -1,21 +1,4 @@
-# AI Message Assistant
-
-<p align="center">
-  <img src="docs/plans/icon.png" width="128" alt="AI Message Assistant icon">
-</p>
-
-AI Message Assistant is a privacy-first Chrome extension that helps you polish
-plain-text message drafts before you send them. It works with Microsoft Teams
-for Web and WhatsApp Web, using your own OpenAI API key through a local Windows
-companion app.
-
-You stay in control at every step: the assistant reads a draft only after you
-ask, shows a suggestion for review, and never sends a message on your behalf.
-Your API key is stored in Windows Credential Manager, never in the extension.
-
-![AI Message Assistant preview](docs/plans/demo1-1280x800.png)
-
-## User Guide
+# AI Message Assistant User Guide
 
 AI Message Assistant helps you improve a message draft before you send it. It
 uses a Chrome extension and a small local companion app. The extension never
