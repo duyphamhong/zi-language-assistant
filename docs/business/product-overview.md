@@ -50,7 +50,7 @@ Suggestions must preserve meaning and technical details. They must not invent fa
 
 ## Current Phase 1 capability
 
-Phase 1 proves the secure architecture through an extension popup/options page and a local native host. It supports offline mock mode and an optional live OpenAI request when configured locally.
+Phase 1 proves the secure architecture through an extension popup/options page and a local native host. Once the user configures an API key locally, requests use the OpenAI model fixed in the host configuration.
 
 Phase 1 does not yet read or write Slack, Microsoft Teams, or any web editor. A successful mock grammar result confirms the technical path; it does not mean an AI model was called.
 

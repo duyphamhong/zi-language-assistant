@@ -23,7 +23,9 @@ const configSchema = z
     // release. GPT-5.6 does not accept a custom temperature in this workflow.
     temperature: z.number().min(0).max(2).optional(),
     requestTimeoutMs: z.number().int().positive().max(120_000),
-    mockMode: z.boolean(),
+    // Retained only to read configurations created by earlier releases. The
+    // native host now always uses the configured OpenAI model.
+    mockMode: z.boolean().optional(),
     logging: z
       .object({
         level: z.enum(['debug', 'info', 'warn', 'error']),
@@ -55,7 +57,6 @@ export const defaultConfig: AppConfig = {
   maxInputCharacters: 10_000,
   maxOutputTokens: 500,
   requestTimeoutMs: 30_000,
-  mockMode: true,
   logging: { level: 'info', includeMessageContent: false },
 };
 export class ConfigRepository {
@@ -77,13 +78,6 @@ export class ConfigRepository {
     const tmp = `${this.filePath}.tmp`;
     await writeFile(tmp, JSON.stringify(value, null, 2), { mode: 0o600 });
     await rename(tmp, this.filePath);
-  }
-  async update(
-    values: Partial<Pick<AppConfig, 'model' | 'mockMode' | 'defaultOperation'>>,
-  ): Promise<AppConfig> {
-    const next = { ...(await this.get()), ...values } as AppConfig;
-    await this.save(next);
-    return next;
   }
 }
 export type _OperationReference = Operation;

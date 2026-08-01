@@ -85,14 +85,11 @@ ai-message-host status
 
 ## 5. Configure your OpenAI API key
 
-The app starts in offline mock mode. This is useful for checking that the
-extension can connect, but it does not call an AI model.
-
-To enable live suggestions, run the following command in an interactive
+To configure live suggestions, run the following command in an interactive
 PowerShell window:
 
 ```powershell
-ai-message-host configure --mock-mode false --model gpt-4.1-mini
+ai-message-host configure
 ```
 
 When prompted, paste your OpenAI API key and press Enter. The characters are
@@ -106,7 +103,7 @@ Run this command to confirm the setup without revealing the key:
 ai-message-host status
 ```
 
-You should see `apiKeyConfigured: true` and `mockMode: false`.
+You should see `apiKeyConfigured: true` and the model configured by the app.
 
 ## 6. Improve a message
 
@@ -138,8 +135,8 @@ replaces or sends your WhatsApp draft.
 2. Select **Open options**.
 3. Enter a short draft, choose an operation, and select **Improve message**.
 
-This is a convenient way to confirm the extension and native host are working.
-In mock mode, the result is generated locally and is not an OpenAI request.
+This is a convenient way to confirm the extension, native host, and configured
+OpenAI API key are working.
 
 ## Updating
 
@@ -180,9 +177,9 @@ ai-message-host status
 ai-message-host doctor
 ```
 
-Then re-run `ai-message-host configure --mock-mode false --model gpt-4.1-mini`
-in an interactive terminal. Do not paste an API key into Chrome, a chat, a
-configuration file, or a support ticket.
+Then re-run `ai-message-host configure` in an interactive terminal. Do not
+paste an API key into Chrome, a chat, a configuration file, or a support
+ticket.
 
 ### The editor is not supported
 

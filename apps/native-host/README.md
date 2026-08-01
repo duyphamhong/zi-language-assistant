@@ -27,14 +27,15 @@ ai-message-host install --extension-id <extension-id>
 
 ## Configure
 
-The native host starts in offline mock mode. To use an OpenAI API key, run:
+To store your OpenAI API key, run:
 
 ```powershell
-ai-message-host configure --mock-mode false --model <approved-model-id>
+ai-message-host configure
 ```
 
 The key is requested interactively and stored in Windows Credential Manager.
-It is never placed in the Chrome extension, npm configuration, or a native
-message.
+The native host always uses the approved model configured in the application
+code; it is never placed in the Chrome extension, npm configuration, or a
+native message.
 
 Use `ai-message-host status` or `ai-message-host doctor` for diagnostics.

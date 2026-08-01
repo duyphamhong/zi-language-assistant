@@ -6,7 +6,6 @@ import {
 } from '@zi-language-assistant/contracts';
 import { ConfigRepository } from '../configuration/config-repository.js';
 import type { SecretStore } from '../credentials/secret-store.js';
-import { MockWritingProvider } from '../writing/mock-writing-provider.js';
 import {
   OpenAiWritingProvider,
   ProviderError,
@@ -64,12 +63,9 @@ export class RequestRouter {
             apiKeyConfigured: await this.secrets.hasOpenAiApiKey(),
             provider: config.provider,
             model: config.model,
-            mockMode: config.mockMode,
           },
         };
-      const provider = config.mockMode
-        ? new MockWritingProvider()
-        : new OpenAiWritingProvider(this.secrets, config);
+      const provider = new OpenAiWritingProvider(this.secrets, config);
       return {
         protocolVersion: PROTOCOL_VERSION,
         requestId,

@@ -88,27 +88,18 @@ program.command('uninstall').action(async () => {
     'Native host registration removed. Credentials were retained.\n',
   );
 });
-program
-  .command('configure')
-  .option('--model <model>')
-  .option('--mock-mode <enabled>', 'true or false')
-  .action(async (options) => {
-    const repository = new ConfigRepository();
-    const values: { model?: string; mockMode?: boolean } = {};
-    if (options.model) values.model = options.model;
-    if (options.mockMode !== undefined)
-      values.mockMode = options.mockMode === 'true';
-    const config = await repository.update(values);
-    const apiKey = await promptSecret(
-      'OpenAI API key (leave blank to keep current key): ',
-    );
-    if (apiKey) {
-      await new OsSecretStore().setOpenAiApiKey(apiKey);
-    }
-    output.write(
-      `Saved configuration (model: ${config.model}, mock mode: ${config.mockMode}).\n`,
-    );
-  });
+program.command('configure').action(async () => {
+  const config = await new ConfigRepository().get();
+  const apiKey = await promptSecret(
+    'OpenAI API key (leave blank to keep current key): ',
+  );
+  if (apiKey) {
+    await new OsSecretStore().setOpenAiApiKey(apiKey);
+  }
+  output.write(
+    `Saved API-key configuration. The native host uses ${config.model}.\n`,
+  );
+});
 program.command('status').action(async () => {
   const config = await new ConfigRepository().get();
   output.write(
@@ -118,7 +109,6 @@ program.command('status').action(async () => {
         apiKeyConfigured: await new OsSecretStore().hasOpenAiApiKey(),
         provider: config.provider,
         model: config.model,
-        mockMode: config.mockMode,
       },
       null,
       2,

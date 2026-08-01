@@ -28,8 +28,8 @@ The extension never automatically edits or sends a message.
 
 ## Sharing with an AI provider
 
-When the user configures and enables the live AI-provider mode, the selected
-draft is sent from the user's local native host to the configured OpenAI
+When the user configures an OpenAI API key, the selected draft is sent from the
+user's local native host to the configured OpenAI
 service over HTTPS, solely to generate the requested suggestion. OpenAI's
 handling of that request is subject to the user's agreement with OpenAI and
 its applicable privacy terms.
