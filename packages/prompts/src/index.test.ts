@@ -22,7 +22,9 @@ describe('writing prompts', () => {
         '../../../docs/prompts/assistant-system-prompt.md',
       ),
       'utf8',
-    ).trim();
+    )
+      .replaceAll('\r\n', '\n')
+      .trim();
 
     expect(assistantSystemPrompt).toBe(documentedPrompt);
   });

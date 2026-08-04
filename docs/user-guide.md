@@ -92,8 +92,9 @@ PowerShell window:
 ai-message-host configure
 ```
 
-When prompted, paste your OpenAI API key and press Enter. The characters are
-not displayed while you type. The key is stored only in Windows Credential
+When prompted, press `Ctrl+V` to paste your OpenAI API key, then press Enter.
+The characters are not displayed while you type, and accidental terminal
+control characters are discarded. The key is stored only in Windows Credential
 Manager under `com.appzihub.ai-message-assistant`; it is not stored in Chrome,
 the extension, an npm file, or a Native Messaging request.
 

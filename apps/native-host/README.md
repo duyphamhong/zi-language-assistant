@@ -34,6 +34,8 @@ ai-message-host configure
 ```
 
 The key is requested interactively and stored in Windows Credential Manager.
+Press `Ctrl+V` to paste from the Windows clipboard; the key remains hidden and
+accidental terminal control characters are discarded.
 The native host always uses the approved model configured in the application
 code; it is never placed in the Chrome extension, npm configuration, or a
 native message.

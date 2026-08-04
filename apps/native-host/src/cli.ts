@@ -1,11 +1,16 @@
-#!/usr/bin/env node
 import { stdin as input, stdout as output } from 'node:process';
 import { dirname, resolve } from 'node:path';
 import { mkdir, rm, writeFile, access } from 'node:fs/promises';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
 import envPaths from 'env-paths';
 import { Command } from 'commander';
 import { ConfigRepository } from './configuration/config-repository.js';
 import { OsSecretStore } from './credentials/os-secret-store.js';
+import {
+  appendClipboardSecret,
+  sanitizeSecretInput,
+} from './credentials/secret-input.js';
 import { createNativeHostManifest } from './installation/native-host-manifest.js';
 import { PRODUCTION_EXTENSION_ID } from './installation/production-extension.js';
 import {
@@ -17,9 +22,22 @@ const paths = envPaths('ai-message-assistant');
 const manifestPath = resolve(paths.config, 'native-host-manifest.json');
 const launcherPath = resolve(paths.data, 'ai-message-host.cmd');
 const hostEntryPoint = resolve(dirname(process.argv[1] ?? ''), 'main.js');
+const execFileAsync = promisify(execFile);
 const program = new Command()
   .name('ai-message-host')
   .description('AI Message Assistant native host');
+
+async function readWindowsClipboard(): Promise<string> {
+  if (process.platform !== 'win32')
+    throw new Error('Clipboard paste is supported on Windows only.');
+  const { stdout } = await execFileAsync('powershell.exe', [
+    '-NoProfile',
+    '-NonInteractive',
+    '-Command',
+    'Get-Clipboard -Raw',
+  ]);
+  return stdout;
+}
 
 async function promptSecret(question: string): Promise<string> {
   if (!input.isTTY) {
@@ -32,20 +50,41 @@ async function promptSecret(question: string): Promise<string> {
   input.resume();
   return new Promise((resolve, reject) => {
     let value = '';
-    const onData = (chunk: Buffer) => {
-      const character = chunk.toString('utf8');
-      if (character === '\r' || character === '\n') {
-        cleanup();
-        output.write('\n');
-        resolve(value);
-      } else if (character === '\u0003') {
-        cleanup();
-        reject(new Error('Configuration cancelled.'));
-      } else if (character === '\u007f' || character === '\b') {
-        value = value.slice(0, -1);
-      } else {
+    let complete = false;
+    const fail = (error: unknown) => {
+      if (complete) return;
+      complete = true;
+      cleanup();
+      reject(error);
+    };
+    const handleData = async (chunk: Buffer) => {
+      for (const character of chunk.toString('utf8')) {
+        if (complete) return;
+        if (character === '\r' || character === '\n') {
+          complete = true;
+          cleanup();
+          output.write('\n');
+          resolve(value);
+          return;
+        }
+        if (character === '\u0003') {
+          fail(new Error('Configuration cancelled.'));
+          return;
+        }
+        if (character === '\u0016') {
+          value = appendClipboardSecret(value, await readWindowsClipboard());
+          continue;
+        }
+        if (character === '\u007f' || character === '\b') {
+          value = value.slice(0, -1);
+          continue;
+        }
         value += character;
       }
+    };
+    let pendingInput = Promise.resolve();
+    const onData = (chunk: Buffer) => {
+      pendingInput = pendingInput.then(() => handleData(chunk)).catch(fail);
     };
     const cleanup = () => {
       input.off('data', onData);
@@ -93,8 +132,9 @@ program.command('configure').action(async () => {
   const apiKey = await promptSecret(
     'OpenAI API key (leave blank to keep current key): ',
   );
-  if (apiKey) {
-    await new OsSecretStore().setOpenAiApiKey(apiKey);
+  const sanitizedApiKey = sanitizeSecretInput(apiKey);
+  if (sanitizedApiKey) {
+    await new OsSecretStore().setOpenAiApiKey(sanitizedApiKey);
   }
   output.write(
     `Saved API-key configuration. The native host uses ${config.model}.\n`,
