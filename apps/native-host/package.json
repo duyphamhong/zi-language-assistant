@@ -1,6 +1,6 @@
 {
   "name": "@duyphamhong/ai-message-host",
-  "version": "0.1.2",
+  "version": "0.1.5",
   "description": "Windows native messaging host for AI Message Assistant.",
   "type": "module",
   "os": [
