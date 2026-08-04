@@ -25,7 +25,7 @@
     "bundle": "esbuild dist/cli.js --bundle --platform=node --format=esm --target=node24 --banner:js=\"#!/usr/bin/env node\" --outfile=runtime/cli.js --external:commander --external:env-paths --external:keytar --external:openai --external:pino --external:zod && esbuild dist/main.js --bundle --platform=node --format=esm --target=node24 --outfile=runtime/main.js --external:commander --external:env-paths --external:keytar --external:openai --external:pino --external:zod && esbuild dist/postinstall.js --bundle --platform=node --format=esm --target=node24 --outfile=runtime/postinstall.js",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "cli": "node dist/cli.js",
-    "postinstall": "node runtime/postinstall.js",
+    "postinstall": "node --input-type=module -e \"if (process.env.npm_config_global === 'true' || process.env.npm_config_location === 'global') await import('./runtime/postinstall.js');\"",
     "prepack": "corepack pnpm run build"
   },
   "dependencies": {
