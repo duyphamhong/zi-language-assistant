@@ -3,7 +3,12 @@
  * Raw Windows terminal input can include a Ctrl+V marker before pasted text.
  */
 export function sanitizeSecretInput(value: string): string {
-  return value.replace(/[\u0000-\u001F\u007F-\u009F]/g, '').trim();
+  return Array.from(value, (character) => {
+    const code = character.charCodeAt(0);
+    return code <= 0x1f || (code >= 0x7f && code <= 0x9f) ? '' : character;
+  })
+    .join('')
+    .trim();
 }
 
 export function appendClipboardSecret(
