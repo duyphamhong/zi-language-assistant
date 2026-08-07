@@ -82,7 +82,7 @@ Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 ```
 
 If you installed with `--ignore-scripts`, registration did not run
-automatically. Complete it manually:
+automatically. Complete it manually, **remember restart Powersell**:
 
 ```powershell
 ai-message-host install
